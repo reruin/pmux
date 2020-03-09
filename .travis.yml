@@ -1,0 +1,26 @@
+language: node_js
+node_js:
+  - 'stable'
+script:
+  - npm install pkg -g
+  - npm run build
+
+before_deploy:
+  - mkdir pmux_windowns_amd64
+  - cp $TRAVIS_BUILD_DIR/build/pmux_win_amd64.exe pmux_windowns_amd64/pmux.exe
+  - tar -zcvf pmux_windowns_amd64.tar.gz pmux_windowns_amd64
+  - mkdir pmux_darwin_amd64
+  - cp $TRAVIS_BUILD_DIR/build/pmux_macos_amd64 pmux_darwin_amd64/pmux
+  - tar -zcvf pmux_darwin_amd64.tar.gz pmux_darwin_amd64
+  - mkdir pmux_linux_amd64
+  - cp $TRAVIS_BUILD_DIR/build/pmux_linux_amd64 pmux_linux_amd64/pmux
+  - tar -zcvf pmux_linux_amd64.tar.gz pmux_linux_amd64
+deploy:
+  provider: releases
+  skip_cleanup: true
+  file: "*.tar.gz"
+  file_glob: true
+  api_key: "$API_KEY"
+  on:
+    tags: true
+    draft: false
